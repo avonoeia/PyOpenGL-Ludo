@@ -167,7 +167,7 @@ def mouseListener(button, state, x, y):
                     gameSituation["selectedToken"] = selectedToken
                     
                     changeColorOfPossibleMoves()
-                    print("Ran the seond time")
+                    
                     gameSituation["waitingForTokenSelection"] = False
                     gameSituation["waitingForMoveSelection"] = True
                 
@@ -190,11 +190,11 @@ def mouseListener(button, state, x, y):
 
             elif gameSituation["waitingForMoveSelection"]:
                 move = detectClickOnPossibleMove(x, y)
-                print("Move", move)
+                
                 if move is not None:
                     delta = gameSituation["possibleMoves"].index(move)+1
                     gameSituation["numOfMovesLeft"] -= (delta - 1)
-                    print("Delta", delta)
+                    
                     
                     # Move token
                     players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] = players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] + delta
@@ -214,7 +214,7 @@ def mouseListener(button, state, x, y):
                     for move in gameSituation["possibleMoves"]:
                         pier = onClickDetectPier(move[0], move[1])
                         coordinates = onClickDetectCoordinates(move[0], move[1])
-                        print(pier, coordinates, "Check")
+                        
                         if pier and coordinates:  #and point < 56
                             board[pier][coordinates][1] = gameSituation["possibleMovesOriginalColor"].pop(0)
 
@@ -227,7 +227,7 @@ def mouseListener(button, state, x, y):
                         # Wait for new token selection
                         gameSituation["waitingForMoveSelection"] = False
                         gameSituation["waitingForTokenSelection"] = True
-            print(gameSituation)
+            
 
 
 
@@ -243,7 +243,7 @@ def mouseListener(button, state, x, y):
             if gameSituation["waitingForDiceRoll"]:
                 diceValue = [6, 2, 6, 4][i] # random.randint(1, 6)
                 i = (i + 1) % mod
-                print("Dice value:", diceValue)
+                print("Dice Value:", diceValue)
                 gameSituation["diceValue"] = diceValue
                 gameSituation["numOfMovesLeft"] += diceValue
 
@@ -271,7 +271,7 @@ def checkOtherPlayerTokens():
         if player == currentTurn:
             continue
         for token in players[player]["tokenPositions"].keys():
-                print("Player Positions", players[player]["tokenPositions"][token], currentTurnTokenNewPosition)
+                
                 if players[player]["tokenPositions"][token] == currentTurnTokenNewPosition:
                     players[player]["tokenPositions"][token] = players[player]["tokenDocks"][token]
                     players[player]["tokenPathProgress"][token] = None
@@ -312,10 +312,10 @@ def changeColorOfPossibleMoves():
         coordinates = onClickDetectCoordinates(paths[gameSituation["currentTurn"] + "Path"][point][0], paths[gameSituation["currentTurn"] + "Path"][point][1])
         gameSituation["possibleMoves"].append(paths[gameSituation["currentTurn"] + "Path"][point])
         if pier and coordinates and point < 56:
-            print(pier, coordinates, paths[gameSituation["currentTurn"] + "Path"][point][0])
+            
             gameSituation["possibleMovesOriginalColor"].append(board[pier][coordinates][1])
             board[pier][coordinates][1] = gameSituation["moveSelectionColor"]
-    print("POSSIBLE MOVES", gameSituation["possibleMoves"])
+    
     # for move in gameSituation["possibleMoves"]:
     #     pier = onClickDetectPier(move[0], move[1])
     #     coordinates = onClickDetectCoordinates(move[0], move[1])
