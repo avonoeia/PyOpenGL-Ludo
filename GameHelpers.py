@@ -1,8 +1,8 @@
 def onClickDetectPier(x, y):
-    if x >= 30 and x <= 225:
+    if x >= 45 and x <= 225:
         if y >= -45 and y <= 45:
             return "pierHorizontalRight"
-    if x <= -30 and x >= -225:
+    if x <= -45 and x >= -225:
         if y >= -45 and y <= 45:
             return "pierHorizontalLeft"
     if x >= -45 and x <= 45:

@@ -34,13 +34,13 @@ players = {
     "yellowPlayer": {
         "tokenColor": (0.75, 0.75, 0.0),
         "tokenPositions": {
-            0: (120, 0),
+            0: (120, -30),
             1: (125, -155),
             2: (155, -125),
             3: (155, -155)
         },
         "tokenPathProgress": {
-            0: 53,
+            0: 2,
             1: None,
             2: None,
             3: None,
@@ -50,7 +50,8 @@ players = {
             1: (125, -155),
             2: (155, -125),
             3: (155, -155)
-        }
+        },
+        "points": 0,
     },
     "bluePlayer": {
         "tokenColor": (0.0, 0.0, 0.5),
@@ -71,7 +72,8 @@ players = {
             1: (-145, 115),
             2: (-115, 145),
             3: (-115, 115)
-        }
+        },
+        "points": 0,
     },
     "greenPlayer": {
         "tokenColor": (0.0, 0.5, 0.0),
@@ -92,18 +94,19 @@ players = {
             1: (-145, -155),
             2: (-115, -125),
             3: (-115, -155)
-        }
+        },
+        "points": 0,
     },
     "redPlayer": {
         "tokenColor": (0.5, 0.0, 0.0),
         "tokenPositions": {
-            0: (125, 145),
+            0: (60, -30),
             1: (125, 115),
             2: (155, 145),
             3: (155, 115),
         },
         "tokenPathProgress": {
-            0: None,
+            0: 17,
             1: None,
             2: None,
             3: None,
@@ -113,11 +116,13 @@ players = {
             1: (125, 115),
             2: (155, 145),
             3: (155, 115),
-        }
+        },
+        "points": 0,
     }
 }
 
 gameSituation = {
+    "safeHomes": [(180, -30), (-180, 30), (-30, -180), (30, 180)],
     "moveSelectionColor": (0.6, 0, 1),
     "turnOrder": ["yellowPlayer", "greenPlayer", "bluePlayer", "redPlayer"],
     "currentTurn": "yellowPlayer",
@@ -190,19 +195,28 @@ def mouseListener(button, state, x, y):
                     delta = gameSituation["possibleMoves"].index(move)+1
                     gameSituation["numOfMovesLeft"] -= (delta - 1)
                     print("Delta", delta)
+                    
                     # Move token
                     players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] = players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] + delta
                     players[gameSituation["currentTurn"]]["tokenPositions"][gameSituation["selectedToken"]] = paths[gameSituation["currentTurn"] + "Path"][players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] - 1]
 
+
+                    checkOtherPlayerTokens()
+                    
+                    # Check if token has reached the end
                     if players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]] == 57:
-                        print("Token reached destination")
-                        return
+                        players[gameSituation["currentTurn"]]["points"] += 1
+                        if players[gameSituation["currentTurn"]]["points"] == 4:
+                            print(f"\n\n\n\n\n**********Player {gameSituation['currentTurn']} has won***********\n\n\n\n\n")
+                        
 
                     # Restore original color of possible moves
                     for move in gameSituation["possibleMoves"]:
                         pier = onClickDetectPier(move[0], move[1])
                         coordinates = onClickDetectCoordinates(move[0], move[1])
-                        board[pier][coordinates][1] = gameSituation["possibleMovesOriginalColor"].pop(0)
+                        print(pier, coordinates, "Check")
+                        if pier and coordinates:  #and point < 56
+                            board[pier][coordinates][1] = gameSituation["possibleMovesOriginalColor"].pop(0)
 
                     gameSituation["possibleMovesOriginalColor"] = []
 
@@ -227,7 +241,7 @@ def mouseListener(button, state, x, y):
         if state == GLUT_DOWN: 	
             # Dice roll
             if gameSituation["waitingForDiceRoll"]:
-                diceValue = [6, 3, 6, 4][i] # random.randint(1, 6)
+                diceValue = [6, 2, 6, 4][i] # random.randint(1, 6)
                 i = (i + 1) % mod
                 print("Dice value:", diceValue)
                 gameSituation["diceValue"] = diceValue
@@ -247,6 +261,24 @@ def mouseListener(button, state, x, y):
 
 i = 0
 mod = 4
+
+def checkOtherPlayerTokens():
+    global gameSituation, players
+    currentTurn = gameSituation["currentTurn"]
+
+    currentTurnTokenNewPosition = players[currentTurn]["tokenPositions"][gameSituation["selectedToken"]]
+    for player in players:
+        if player == currentTurn:
+            continue
+        for token in players[player]["tokenPositions"].keys():
+                print("Player Positions", players[player]["tokenPositions"][token], currentTurnTokenNewPosition)
+                if players[player]["tokenPositions"][token] == currentTurnTokenNewPosition:
+                    players[player]["tokenPositions"][token] = players[player]["tokenDocks"][token]
+                    players[player]["tokenPathProgress"][token] = None
+                    # gameSituation["tokensLeft"][player] += 1
+                    # print(f"Token {token} of player {player} has been docked")
+                # return True
+    return False
 
 def changeTurns():
     global gameSituation
@@ -273,7 +305,7 @@ def changeColorOfPossibleMoves():
     selectedTokenCurrentPathProgress = players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]]
     numberOfMoves = gameSituation["numOfMovesLeft"]
     # pathPoints = paths[gameSituation["currentTurn"] + "Path"].keys()[selectedTokenCurrentPathProgress:selectedTokenCurrentPathProgress+numberOfMoves+1]
-    end_point = min(56, players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]]+gameSituation["numOfMovesLeft"]+1) + 1
+    end_point = min(56, players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]]+gameSituation["numOfMovesLeft"])+1
 
     for point in range(players[gameSituation["currentTurn"]]["tokenPathProgress"][gameSituation["selectedToken"]], end_point):
         pier = onClickDetectPier(paths[gameSituation["currentTurn"] + "Path"][point][0], paths[gameSituation["currentTurn"] + "Path"][point][1])
