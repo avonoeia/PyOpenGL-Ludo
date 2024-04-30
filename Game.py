@@ -34,13 +34,13 @@ players = {
     "yellowPlayer": {
         "tokenColor": (0.75, 0.75, 0.0),
         "tokenPositions": {
-            0: (120, -30),
+            0: (120, 0),
             1: (125, -155),
             2: (155, -125),
             3: (155, -155)
         },
         "tokenPathProgress": {
-            0: 2,
+            0: 53,
             1: None,
             2: None,
             3: None,
@@ -241,7 +241,7 @@ def mouseListener(button, state, x, y):
         if state == GLUT_DOWN: 	
             # Dice roll
             if gameSituation["waitingForDiceRoll"]:
-                diceValue = [6, 2, 6, 4][i] # random.randint(1, 6)
+                diceValue = [6, 3, 6, 4][i] # random.randint(1, 6)
                 i = (i + 1) % mod
                 print("Dice Value:", diceValue)
                 gameSituation["diceValue"] = diceValue
@@ -312,7 +312,6 @@ def changeColorOfPossibleMoves():
         coordinates = onClickDetectCoordinates(paths[gameSituation["currentTurn"] + "Path"][point][0], paths[gameSituation["currentTurn"] + "Path"][point][1])
         gameSituation["possibleMoves"].append(paths[gameSituation["currentTurn"] + "Path"][point])
         if pier and coordinates and point < 56:
-            
             gameSituation["possibleMovesOriginalColor"].append(board[pier][coordinates][1])
             board[pier][coordinates][1] = gameSituation["moveSelectionColor"]
     
