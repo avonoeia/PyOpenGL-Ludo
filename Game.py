@@ -272,7 +272,7 @@ def checkOtherPlayerTokens():
             continue
         for token in players[player]["tokenPositions"].keys():
                 
-                if players[player]["tokenPositions"][token] == currentTurnTokenNewPosition:
+                if players[player]["tokenPositions"][token] == currentTurnTokenNewPosition and currentTurnTokenNewPosition not in gameSituation["safeHomes"]:
                     players[player]["tokenPositions"][token] = players[player]["tokenDocks"][token]
                     players[player]["tokenPathProgress"][token] = None
                     # gameSituation["tokensLeft"][player] += 1
